@@ -12,6 +12,7 @@
 		B2D75A65203D2B2D000D7D09 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A63203D2B2D000D7D09 /* Main.storyboard */; };
 		B2D75A67203D2B2D000D7D09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A66203D2B2D000D7D09 /* Assets.xcassets */; };
 		B2D75A6A203D2B2D000D7D09 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A68203D2B2D000D7D09 /* LaunchScreen.storyboard */; };
+		B2D75A72203D2B3C000D7D09 /* LiveKnob.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		B2D75A66203D2B2D000D7D09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B2D75A69203D2B2D000D7D09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B2D75A6B203D2B2D000D7D09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveKnob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				B2D75A5F203D2B2D000D7D09 /* AppDelegate.swift */,
 				B2D75A61203D2B2D000D7D09 /* ViewController.swift */,
+				B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */,
 				B2D75A63203D2B2D000D7D09 /* Main.storyboard */,
 				B2D75A66203D2B2D000D7D09 /* Assets.xcassets */,
 				B2D75A68203D2B2D000D7D09 /* LaunchScreen.storyboard */,
@@ -136,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2D75A72203D2B3C000D7D09 /* LiveKnob.swift in Sources */,
 				B2D75A62203D2B2D000D7D09 /* ViewController.swift in Sources */,
 				B2D75A60203D2B2D000D7D09 /* AppDelegate.swift in Sources */,
 			);
@@ -277,6 +281,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 77Y3N48SNF;
 				INFOPLIST_FILE = LiveKnob/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cemolcay.LiveKnob;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -292,6 +297,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 77Y3N48SNF;
 				INFOPLIST_FILE = LiveKnob/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cemolcay.LiveKnob;
 				PRODUCT_NAME = "$(TARGET_NAME)";

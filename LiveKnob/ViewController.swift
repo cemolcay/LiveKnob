@@ -9,17 +9,17 @@
 import UIKit
 
 class ViewController: UIViewController {
+  @IBOutlet weak var knob: LiveKnob?
+  @IBOutlet weak var knobLabel: UILabel?
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
+    guard let knob = knob, let knobLabel = knobLabel else { return }
+    knobLabel.text = String(format: "%.2f", arguments: [knob.value])
   }
 
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
+  @IBAction func knobValueDidChange(sender: LiveKnob) {
+    knobLabel?.text = String(format: "%.2f", arguments: [sender.value])
   }
-
-
 }
 
