@@ -17,7 +17,7 @@ import UIKit.UIGestureRecognizerSubclass
   @IBInspectable public var maximumValue: Float = 1.0 { didSet { drawKnob() }}
 
   /// Value of the knob. Also known as progress.
-  @IBInspectable public var value: Float = 0.0 { didSet { updateKnob() }}
+  @IBInspectable public var value: Float = 0.0 { didSet { setNeedsLayout() }}
 
   /// Default color for the ring base. Defaults black.
   @IBInspectable public var baseColor: UIColor = .black { didSet { drawKnob() }}
@@ -73,18 +73,16 @@ import UIKit.UIGestureRecognizerSubclass
     layer.addSublayer(baseLayer)
     layer.addSublayer(progressLayer)
     layer.addSublayer(pointerLayer)
-    // Draw
-    drawKnob()
   }
 
   // MARK: Lifecycle
 
-  public override func prepareForInterfaceBuilder() {
-    super.prepareForInterfaceBuilder()
+  public override func layoutSubviews() {
+    super.layoutSubviews()
     drawKnob()
   }
 
-  private func drawKnob() {
+  public func drawKnob() {
     // Setup layers
     baseLayer.bounds = bounds
     baseLayer.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
@@ -113,17 +111,9 @@ import UIKit.UIGestureRecognizerSubclass
     pointerLayer.path = pointer.cgPath
     pointerLayer.lineCap = kCALineCapRound
 
-    // Update progress and pointer.
-    updateKnob()
-  }
-
-  private func updateKnob() {
-    // Draw progress
     let angle = CGFloat(angleForValue(value))
-    let center = CGPoint(x: baseLayer.bounds.width / 2, y: baseLayer.bounds.height / 2)
-    let radius = (min(baseLayer.bounds.width, baseLayer.bounds.height) / 2) - baseLineWidth
-    let ring = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: angle, clockwise: true)
-    progressLayer.path = ring.cgPath
+    let progressRing = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: angle, clockwise: true)
+    progressLayer.path = progressRing.cgPath
     progressLayer.lineCap = kCALineCapRound
 
     // Draw pointer
@@ -143,8 +133,7 @@ import UIKit.UIGestureRecognizerSubclass
     var boundedAngle = gesture.touchAngle
     if boundedAngle > midPointAngle {
       boundedAngle -= 2 * CGFloat.pi
-    }
-    else if boundedAngle < (midPointAngle - 2 * CGFloat.pi) {
+    } else if boundedAngle < (midPointAngle - 2 * CGFloat.pi) {
       boundedAngle += 2 * CGFloat.pi
     }
 
@@ -204,4 +193,3 @@ public class RotationGestureRecognizer: UIPanGestureRecognizer {
     minimumNumberOfTouches = 1
   }
 }
-
