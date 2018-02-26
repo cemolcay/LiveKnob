@@ -10,6 +10,11 @@ import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
 @IBDesignable public class LiveKnob: UIControl {
+
+  /// Whether changes in the value of the knob generate continuous update events.
+  /// Defaults `true`.
+  @IBInspectable public var continuous = true
+
   /// The minimum value of the knob. Defaults to 0.0.
   @IBInspectable public var minimumValue: Float = 0.0 { didSet { drawKnob() }}
 
@@ -38,17 +43,17 @@ import UIKit.UIGestureRecognizerSubclass
   @IBInspectable public var pointerLineWidth: CGFloat = 2 { didSet { drawKnob() }}
 
   /// Layer for the base ring.
-  private let baseLayer = CAShapeLayer()
+  public private(set) var baseLayer = CAShapeLayer()
   /// Layer for the progress ring.
-  private let progressLayer = CAShapeLayer()
+  public private(set) var progressLayer = CAShapeLayer()
   /// Layer for the value pointer.
-  private let pointerLayer = CAShapeLayer()
+  public private(set) var pointerLayer = CAShapeLayer()
   /// Start angle of the base ring.
-  private var startAngle = -CGFloat.pi * 11 / 8.0
+  public var startAngle = -CGFloat.pi * 11 / 8.0
   /// End angle of the base ring.
-  private var endAngle = CGFloat.pi * 3 / 8.0
+  public var endAngle = CGFloat.pi * 3 / 8.0
   /// Knob gesture recognizer.
-  private var gestureRecognizer: RotationGestureRecognizer!
+  public private(set) var gestureRecognizer: RotationGestureRecognizer!
 
   // MARK: Init
 
@@ -139,7 +144,15 @@ import UIKit.UIGestureRecognizerSubclass
 
     boundedAngle = min(endAngle, max(startAngle, boundedAngle))
     value = min(maximumValue, max(minimumValue, valueForAngle(boundedAngle)))
-    sendActions(for: .valueChanged)
+
+    // Inform changes based on continuous behaviour of the knob.
+    if continuous {
+      sendActions(for: .valueChanged)
+    } else {
+      if gesture.state == .ended || gesture.state == .cancelled {
+        sendActions(for: .valueChanged)
+      }
+    }
   }
 
   // MARK: Value/Angle conversion
