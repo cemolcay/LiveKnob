@@ -248,6 +248,12 @@ public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
 
   // MARK: Lifecycle
 
+  public init() {
+    super.init(target: nil, action: nil)
+    maximumNumberOfTouches = 1
+    minimumNumberOfTouches = 1
+  }
+
   public override init(target: Any?, action: Selector?) {
     super.init(target: target, action: action)
     maximumNumberOfTouches = 1
