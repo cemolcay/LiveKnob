@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     super.viewDidLoad()
     guard let knob = knob, let knobLabel = knobLabel else { return }
     knobLabel.text = String(format: "%.2f", arguments: [knob.value])
+    knob.controlType = .horizontalAndVertical
   }
 
   @IBAction func knobValueDidChange(sender: LiveKnob) {

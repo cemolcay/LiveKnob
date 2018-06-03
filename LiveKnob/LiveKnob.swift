@@ -9,8 +9,19 @@
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
-@IBDesignable public class LiveKnob: UIControl {
+/// Knob controlling type. Rotating or horizontal and/or vertical touching.
+public enum LiveKnobControlType {
+  /// Only horizontal sliding changes the knob's value.
+  case horizontal
+  /// Only vertical sliding changes the knob's value.
+  case vertical
+  /// Both horizontal and vertical sliding changes the knob's value.
+  case horizontalAndVertical
+  /// Only rotating sliding changes the knob's value.
+  case rotary
+}
 
+@IBDesignable public class LiveKnob: UIControl {
   /// Whether changes in the value of the knob generate continuous update events.
   /// Defaults `true`.
   @IBInspectable public var continuous = true
@@ -22,7 +33,12 @@ import UIKit.UIGestureRecognizerSubclass
   @IBInspectable public var maximumValue: Float = 1.0 { didSet { drawKnob() }}
 
   /// Value of the knob. Also known as progress.
-  @IBInspectable public var value: Float = 0.0 { didSet { setNeedsLayout() }}
+  @IBInspectable public var value: Float = 0.0 {
+    didSet {
+      value = min(maximumValue, max(minimumValue, value))
+      setNeedsLayout()
+    }
+  }
 
   /// Default color for the ring base. Defaults black.
   @IBInspectable public var baseColor: UIColor = .black { didSet { drawKnob() }}
@@ -52,8 +68,10 @@ import UIKit.UIGestureRecognizerSubclass
   public var startAngle = -CGFloat.pi * 11 / 8.0
   /// End angle of the base ring.
   public var endAngle = CGFloat.pi * 3 / 8.0
+  /// Knob's sliding type for changing its value. Defaults to rotary.
+  public var controlType: LiveKnobControlType = .rotary
   /// Knob gesture recognizer.
-  public private(set) var gestureRecognizer: RotationGestureRecognizer!
+  public private(set) var gestureRecognizer: LiveKnobGestureRecognizer!
 
   // MARK: Init
 
@@ -69,7 +87,7 @@ import UIKit.UIGestureRecognizerSubclass
 
   private func commonInit() {
     // Setup knob gesture
-    gestureRecognizer = RotationGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
+    gestureRecognizer = LiveKnobGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
     addGestureRecognizer(gestureRecognizer)
     // Setup layers
     baseLayer.fillColor = UIColor.clear.cgColor
@@ -132,18 +150,29 @@ import UIKit.UIGestureRecognizerSubclass
 
   // note the use of dynamic, because calling
   // private swift selectors(@ gestureRec target:action:!) gives an exception
-  @objc dynamic func handleGesture(_ gesture: RotationGestureRecognizer) {
-    let midPointAngle = (2 * CGFloat.pi + startAngle - endAngle) / 2 + endAngle
+  @objc dynamic func handleGesture(_ gesture: LiveKnobGestureRecognizer) {
 
-    var boundedAngle = gesture.touchAngle
-    if boundedAngle > midPointAngle {
-      boundedAngle -= 2 * CGFloat.pi
-    } else if boundedAngle < (midPointAngle - 2 * CGFloat.pi) {
-      boundedAngle += 2 * CGFloat.pi
+    switch controlType {
+    case .horizontal:
+      value += Float(gesture.diagonalChange.width) * (maximumValue - minimumValue)
+    case .vertical:
+      value -= Float(gesture.diagonalChange.height) * (maximumValue - minimumValue)
+    case .horizontalAndVertical:
+      value += Float(gesture.diagonalChange.width) * (maximumValue - minimumValue)
+      value -= Float(gesture.diagonalChange.height) * (maximumValue - minimumValue)
+    case .rotary:
+      let midPointAngle = (2 * CGFloat.pi + startAngle - endAngle) / 2 + endAngle
+
+      var boundedAngle = gesture.touchAngle
+      if boundedAngle > midPointAngle {
+        boundedAngle -= 2 * CGFloat.pi
+      } else if boundedAngle < (midPointAngle - 2 * CGFloat.pi) {
+        boundedAngle += 2 * CGFloat.pi
+      }
+
+      boundedAngle = min(endAngle, max(startAngle, boundedAngle))
+      value = min(maximumValue, max(minimumValue, valueForAngle(boundedAngle)))
     }
-
-    boundedAngle = min(endAngle, max(startAngle, boundedAngle))
-    value = min(maximumValue, max(minimumValue, valueForAngle(boundedAngle)))
 
     // Inform changes based on continuous behaviour of the knob.
     if continuous {
@@ -171,24 +200,43 @@ import UIKit.UIGestureRecognizerSubclass
 }
 
 /// Custom gesture recognizer for the knob.
-public class RotationGestureRecognizer: UIPanGestureRecognizer {
+public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
   /// Current angle of the touch related the current progress value of the knob.
-  public var touchAngle: CGFloat = 0
+  public private(set) var touchAngle: CGFloat = 0
+  /// Horizontal and vertical slide changes for the calculating current progress value of the knob.
+  public private(set) var diagonalChange: CGSize = .zero
+  /// Horizontal and vertical slide calculation reference.
+  private var lastTouchPoint: CGPoint = .zero
+  /// Horizontal and vertical slide sensitivity multiplier. Defaults 0.005.
+  public var slidingSensitivity: CGFloat = 0.001
 
   // MARK: UIGestureRecognizerSubclass
 
   public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
     super.touchesBegan(touches, with: event)
+
+    // Update diagonal movement.
+    guard let touch = touches.first else { return }
+    lastTouchPoint = touch.location(in: view)
+
+    // Update rotary movement.
     updateTouchAngleWithTouches(touches)
   }
 
   public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
     super.touchesMoved(touches, with: event)
+
+    // Update diagonal movement.
+    guard let touchPoint = touches.first?.location(in: view) else { return }
+    diagonalChange.width = (touchPoint.x - lastTouchPoint.x) * slidingSensitivity
+    diagonalChange.height = (touchPoint.y - lastTouchPoint.y) * slidingSensitivity
+
+    // Update rotary movement.
     updateTouchAngleWithTouches(touches)
   }
 
   private func updateTouchAngleWithTouches(_ touches: Set<UITouch>) {
-    let touch = touches.first!
+    guard let touch = touches.first else { return }
     let touchPoint = touch.location(in: view)
     touchAngle = calculateAngleToPoint(touchPoint)
   }
