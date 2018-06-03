@@ -31,4 +31,4 @@ Usage
 You can change the line width and color of the base ring, progress ring and pointer.   Also you can tweak the start and end angles of the base knob ring.  
 
 ### LiveKnobControlType
-You can set the `controlType` for change the knob's touch control behaviour. It supports horizontal and/or vertical slidings as well as rotary slidings.
+You can set the `controlType` for changing the knob's touch control behaviour. It supports horizontal and/or vertical slidings as well as rotary slidings.
