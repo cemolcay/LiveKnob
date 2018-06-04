@@ -10,7 +10,7 @@ import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
 /// Knob controlling type. Rotating or horizontal and/or vertical touching.
-public enum LiveKnobControlType {
+public enum LiveKnobControlType: Int, Codable {
   /// Only horizontal sliding changes the knob's value.
   case horizontal
   /// Only vertical sliding changes the knob's value.
