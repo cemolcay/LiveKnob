@@ -231,6 +231,9 @@ public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
     diagonalChange.width = (touchPoint.x - lastTouchPoint.x) * slidingSensitivity
     diagonalChange.height = (touchPoint.y - lastTouchPoint.y) * slidingSensitivity
 
+    // Reset last touch point.
+    lastTouchPoint = touchPoint
+
     // Update rotary movement.
     updateTouchAngleWithTouches(touches)
   }
