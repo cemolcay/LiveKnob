@@ -1,7 +1,8 @@
 LiveKnob
 ===
 
-Yet another knob for iOS but with IBDesignable and Ableton Live style.
+Yet another knob for iOS but with IBDesignable and Ableton Live style.  
+Horizontal, vertical (or both) and rotary control options.
 
 ![alt tag](https://github.com/cemolcay/LiveKnob/raw/master/LiveKnob.gif)
 
