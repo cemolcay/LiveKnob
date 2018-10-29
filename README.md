@@ -33,3 +33,8 @@ You can change the line width and color of the base ring, progress ring and poin
 
 ### LiveKnobControlType
 You can set the `controlType` for changing the knob's touch control behaviour. It supports horizontal and/or vertical slidings as well as rotary slidings.
+
+AppStore
+----
+
+This control used in my app [ArpBud](https://itunes.apple.com/us/app/arpbud-midi-sequencer-more/id1349342326?ls=1&mt=8) in App Store, check it out!
