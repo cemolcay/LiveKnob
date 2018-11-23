@@ -125,19 +125,19 @@ public enum LiveKnobControlType: Int, Codable {
     let radius = (min(baseLayer.bounds.width, baseLayer.bounds.height) / 2) - baseLineWidth
     let ring = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
     baseLayer.path = ring.cgPath
-    baseLayer.lineCap = kCALineCapRound
+    baseLayer.lineCap = .round
 
     // Draw pointer.
     let pointer = UIBezierPath()
     pointer.move(to: center)
     pointer.addLine(to: CGPoint(x: center.x + radius, y: center.y))
     pointerLayer.path = pointer.cgPath
-    pointerLayer.lineCap = kCALineCapRound
+    pointerLayer.lineCap = .round
 
     let angle = CGFloat(angleForValue(value))
     let progressRing = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: angle, clockwise: true)
     progressLayer.path = progressRing.cgPath
-    progressLayer.lineCap = kCALineCapRound
+    progressLayer.lineCap = .round
 
     // Draw pointer
     CATransaction.begin()
