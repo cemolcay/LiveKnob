@@ -22,5 +22,9 @@ class ViewController: UIViewController {
   @IBAction func knobValueDidChange(sender: LiveKnob) {
     knobLabel?.text = String(format: "%.2f", arguments: [sender.value])
   }
+
+  @IBAction func knobDidEndChangingValue(sender: LiveKnob) {
+    print("did end changing value")
+  }
 }
 

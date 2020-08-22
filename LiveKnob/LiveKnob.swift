@@ -182,6 +182,10 @@ public enum LiveKnobControlType: Int, Codable {
         sendActions(for: .valueChanged)
       }
     }
+
+    if gesture.state == .ended {
+      sendActions(for: .editingDidEnd)
+    }
   }
 
   // MARK: Value/Angle conversion
@@ -236,6 +240,11 @@ public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
 
     // Update rotary movement.
     updateTouchAngleWithTouches(touches)
+  }
+
+  public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+    super.touchesEnded(touches, with: event)
+    state = .ended
   }
 
   private func updateTouchAngleWithTouches(_ touches: Set<UITouch>) {
