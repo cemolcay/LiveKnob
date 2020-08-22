@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "LiveKnob"
-  s.version      = "0.0.3"
+  s.version      = "0.0.4"
   s.summary      = "Yet another knob for iOS but with IBDesignable and Ableton Live style."
   s.swift_version = "4.2"
 
