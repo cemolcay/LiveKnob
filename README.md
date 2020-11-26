@@ -34,6 +34,9 @@ You can change the line width and color of the base ring, progress ring and poin
 ### LiveKnobControlType
 You can set the `controlType` for changing the knob's touch control behaviour. It supports horizontal and/or vertical slidings as well as rotary slidings.
 
+### LiveKnobMarker
+You can create custom marker views in with `LiveKnobMarker` type and set them to LiveKnob's `markers` array in order to draw markers around the knob. You can set individual offset and transform for each marker as well. 
+
 AppStore
 ----
 

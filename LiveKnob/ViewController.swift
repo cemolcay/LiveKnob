@@ -17,8 +17,17 @@ class ViewController: UIViewController {
     guard let knob = knob, let knobLabel = knobLabel else { return }
     knobLabel.text = String(format: "%.2f", arguments: [knob.value])
     knob.controlType = .horizontalAndVertical
+    knob.markers = [Int](0..<8).map({ _ in createMarker() })
   }
-
+  
+  func createMarker() -> LiveKnobMarker {
+    let view = LiveKnobMarker(frame: CGRect(origin: .zero, size: CGSize(width: 8, height: 8)))
+    view.isUserInteractionEnabled = false
+    view.backgroundColor = .lightGray
+    view.layer.cornerRadius = 4
+    return view
+  }
+  
   @IBAction func knobValueDidChange(sender: LiveKnob) {
     knobLabel?.text = String(format: "%.2f", arguments: [sender.value])
   }
