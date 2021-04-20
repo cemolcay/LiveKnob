@@ -12,7 +12,8 @@
 		B2D75A65203D2B2D000D7D09 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A63203D2B2D000D7D09 /* Main.storyboard */; };
 		B2D75A67203D2B2D000D7D09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A66203D2B2D000D7D09 /* Assets.xcassets */; };
 		B2D75A6A203D2B2D000D7D09 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2D75A68203D2B2D000D7D09 /* LaunchScreen.storyboard */; };
-		B2D75A72203D2B3C000D7D09 /* LiveKnob.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */; };
+		C1EF96EB262F5DF4005E6CF9 /* LiveKnob.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EF96EA262F5DF4005E6CF9 /* LiveKnob.swift */; };
+		C1EF96EE262F5E06005E6CF9 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EF96ED262F5E06005E6CF9 /* Package.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,7 +24,8 @@
 		B2D75A66203D2B2D000D7D09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B2D75A69203D2B2D000D7D09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B2D75A6B203D2B2D000D7D09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveKnob.swift; sourceTree = "<group>"; };
+		C1EF96EA262F5DF4005E6CF9 /* LiveKnob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveKnob.swift; sourceTree = "<group>"; };
+		C1EF96ED262F5E06005E6CF9 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,13 +58,30 @@
 		B2D75A5E203D2B2D000D7D09 /* LiveKnob */ = {
 			isa = PBXGroup;
 			children = (
+				C1EF96ED262F5E06005E6CF9 /* Package.swift */,
+				C1EF96E8262F5DF4005E6CF9 /* Sources */,
 				B2D75A5F203D2B2D000D7D09 /* AppDelegate.swift */,
 				B2D75A61203D2B2D000D7D09 /* ViewController.swift */,
-				B2D75A71203D2B3C000D7D09 /* LiveKnob.swift */,
 				B2D75A63203D2B2D000D7D09 /* Main.storyboard */,
 				B2D75A66203D2B2D000D7D09 /* Assets.xcassets */,
 				B2D75A68203D2B2D000D7D09 /* LaunchScreen.storyboard */,
 				B2D75A6B203D2B2D000D7D09 /* Info.plist */,
+			);
+			path = LiveKnob;
+			sourceTree = "<group>";
+		};
+		C1EF96E8262F5DF4005E6CF9 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C1EF96E9262F5DF4005E6CF9 /* LiveKnob */,
+			);
+			path = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+		C1EF96E9262F5DF4005E6CF9 /* LiveKnob */ = {
+			isa = PBXGroup;
+			children = (
+				C1EF96EA262F5DF4005E6CF9 /* LiveKnob.swift */,
 			);
 			path = LiveKnob;
 			sourceTree = "<group>";
@@ -140,7 +159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B2D75A72203D2B3C000D7D09 /* LiveKnob.swift in Sources */,
+				C1EF96EE262F5E06005E6CF9 /* Package.swift in Sources */,
+				C1EF96EB262F5DF4005E6CF9 /* LiveKnob.swift in Sources */,
 				B2D75A62203D2B2D000D7D09 /* ViewController.swift in Sources */,
 				B2D75A60203D2B2D000D7D09 /* AppDelegate.swift in Sources */,
 			);
