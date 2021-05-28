@@ -117,6 +117,9 @@ public enum LiveKnobControlType: Int, Codable {
   }
   
   public func drawKnob() {
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    
     // Setup layers
     baseLayer.bounds = bounds
     baseLayer.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
@@ -151,8 +154,6 @@ public enum LiveKnobControlType: Int, Codable {
     progressLayer.lineCap = .round
     
     // Draw pointer
-    CATransaction.begin()
-    CATransaction.setDisableActions(true)
     pointerLayer.transform = CATransform3DMakeRotation(angle, 0, 0, 1)
     CATransaction.commit()
   }
