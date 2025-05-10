@@ -169,44 +169,84 @@ public enum LiveKnobControlType: Int, Codable, CaseIterable, CustomStringConvert
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
-        // Setup layers
-        baseLayer.bounds = bounds
-        baseLayer.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
-        progressLayer.bounds = baseLayer.bounds
-        progressLayer.position = baseLayer.position
-        pointerLayer.bounds = baseLayer.bounds
-        pointerLayer.position = baseLayer.position
-        baseLayer.lineWidth = baseLineWidth
-        progressLayer.lineWidth = progressLineWidth
-        pointerLayer.lineWidth = pointerLineWidth
-        baseLayer.strokeColor = baseColor.cgColor
-        progressLayer.strokeColor = progressColor.cgColor
-        pointerLayer.strokeColor = pointerColor.cgColor
+        // Get the minimum dimension to determine the actual knob size
+        let shortestSide = min(bounds.width, bounds.height)
         
-        // Draw base ring.
-        let center = CGPoint(x: baseLayer.bounds.width / 2, y: baseLayer.bounds.height / 2)
-        let radius = (min(baseLayer.bounds.width, baseLayer.bounds.height) / 2) - baseLineWidth
-        let ring = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
+        // Calculate the inset to account for the baseLineWidth
+        // The inset is half the line width to ensure lines are fully visible
+        let inset = baseLineWidth / 2
+        
+        // Calculate usable size (accounting for the line width)
+        let usableSize = CGSize(width: shortestSide - inset * 2, height: shortestSide - inset * 2)
+        
+        // Calculate center point of the view
+        let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
+        
+        // Calculate radius from the usable size (half the shortest side minus the inset)
+        let radius = usableSize.width / 2
+        
+        // Configure the layer bounds and positions
+        // All layers should have the same bounds to ensure proper centering
+        let layerBounds = CGRect(x: 0, y: 0, width: shortestSide, height: shortestSide)
+        
+        // Set up base layer
+        baseLayer.bounds = layerBounds
+        baseLayer.position = centerPoint
+        baseLayer.lineWidth = baseLineWidth
+        baseLayer.strokeColor = baseColor.cgColor
+        baseLayer.fillColor = UIColor.clear.cgColor
+        
+        // Set up progress layer
+        progressLayer.bounds = layerBounds
+        progressLayer.position = centerPoint
+        progressLayer.lineWidth = progressLineWidth
+        progressLayer.strokeColor = progressColor.cgColor
+        progressLayer.fillColor = UIColor.clear.cgColor
+        
+        // Set up pointer layer
+        pointerLayer.bounds = layerBounds
+        pointerLayer.position = centerPoint
+        pointerLayer.lineWidth = pointerLineWidth
+        pointerLayer.strokeColor = pointerColor.cgColor
+        pointerLayer.fillColor = UIColor.clear.cgColor
+        
+        // Calculate the center of the layer bounds for path drawing
+        let layerCenter = CGPoint(x: layerBounds.width / 2, y: layerBounds.height / 2)
+        
+        // Draw base ring
+        let ring = UIBezierPath(
+            arcCenter: layerCenter,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            clockwise: true
+        )
         baseLayer.path = ring.cgPath
         baseLayer.lineCap = .round
         
-        // Draw pointer.
-        let pointer = UIBezierPath()
-        pointer.move(to: center)
-        pointer.addLine(to: CGPoint(x: center.x + radius, y: center.y))
-        pointerLayer.path = pointer.cgPath
-        pointerLayer.lineCap = .round
-        
+        // Draw progress ring
         let angle = CGFloat(angleForValue(value))
-        let progressRing = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: angle, clockwise: true)
+        let progressRing = UIBezierPath(
+            arcCenter: layerCenter,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: angle,
+            clockwise: true
+        )
         progressLayer.path = progressRing.cgPath
         progressLayer.lineCap = .round
         
         // Draw pointer
+        let pointer = UIBezierPath()
+        pointer.move(to: layerCenter)
+        pointer.addLine(to: CGPoint(x: layerCenter.x + radius, y: layerCenter.y))
+        pointerLayer.path = pointer.cgPath
+        pointerLayer.lineCap = .round
         pointerLayer.transform = CATransform3DMakeRotation(angle, 0, 0, 1)
+        
         CATransaction.commit()
     }
-    
+
     // Movement direction enum to track axis lock
     private enum MovementDirection {
         case none
@@ -469,6 +509,13 @@ extension LiveKnob {
     }
     
     func layoutMarkersIfNeeded() {
+        let shortestSide = min(bounds.width, bounds.height)
+        let inset = baseLineWidth / 2
+        
+        // Calculate radius for marker positioning
+        // This uses the same radius calculation as in drawKnob
+        let knobRadius = (shortestSide - inset * 2) / 2
+        
         for (index, marker) in markers.enumerated() {
             let angle = radians(from: self.angle(for: marker, at: index))
             
@@ -477,14 +524,20 @@ extension LiveKnob {
             
             marker.transform = .identity
             var rect = marker.frame
-            let radius = (min(baseLayer.bounds.width, baseLayer.bounds.height) / 2) - baseLineWidth + marker.markerOffset
             
-            let newX = CGFloat(x) * radius + center.x
-            let newY = CGFloat(y) * radius + center.y
+            // Position the marker outside the knob with the correct offset
+            let markerRadius = knobRadius + marker.markerOffset
             
+            // Calculate the position relative to the view's center
+            let newX = CGFloat(x) * markerRadius + bounds.midX
+            let newY = CGFloat(y) * markerRadius + bounds.midY
+            
+            // Adjust marker position (centered on the calculated point)
             rect.origin.x = newX - marker.frame.width / 2
             rect.origin.y = newY - marker.frame.height / 2
             marker.frame = rect
+            
+            // Apply custom transform or rotate to match the angle
             marker.transform = marker.markerTransform ?? CGAffineTransform(rotationAngle: angle)
         }
     }
