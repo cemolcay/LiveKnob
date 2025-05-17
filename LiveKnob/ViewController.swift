@@ -14,8 +14,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let knob = knob, let knobLabel = knobLabel else { return }
-        knobLabel.text = String(format: "%.2f", arguments: [knob.value])
+        guard let knob = knob else { return }
+        updateKnobValueText()
         
         // For coarse vertical, fine horizontal control
         knob.controlType = .coarseVerticalFineHorizontal
@@ -23,6 +23,8 @@ class ViewController: UIViewController {
         
         // Add markers around the knob
         knob.markers = [Int](0..<8).map({ _ in createMarker() })
+        
+        knob.addDoubleTapGesture(target: self, action: #selector(knobDidDoubleTap(sender:)))
     }
     
     func createMarker() -> LiveKnobMarker {
@@ -34,11 +36,20 @@ class ViewController: UIViewController {
     }
     
     @IBAction func knobValueDidChange(sender: LiveKnob) {
-        knobLabel?.text = String(format: "%.2f", arguments: [sender.value])
+        updateKnobValueText()
     }
     
     @IBAction func knobDidEndChangingValue(sender: LiveKnob) {
         print("did end changing value")
+    }
+    
+    @IBAction func knobDidDoubleTap(sender: UITapGestureRecognizer) {
+        knob?.value = 0
+        updateKnobValueText()
+    }
+    
+    func updateKnobValueText() {
+        knobLabel?.text = String(format: "%.2f", arguments: [knob?.value ?? 0])
     }
 }
 

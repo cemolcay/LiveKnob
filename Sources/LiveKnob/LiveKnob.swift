@@ -52,7 +52,7 @@ public enum LiveKnobControlType: Int, Codable, CaseIterable, CustomStringConvert
     }
 }
 
-@IBDesignable public class LiveKnob: UIControl {
+@IBDesignable public class LiveKnob: UIControl, UIGestureRecognizerDelegate {
     /// Whether changes in the value of the knob generate continuous update events.
     /// Defaults `true`.
     @IBInspectable public var continuous = true
@@ -115,6 +115,7 @@ public enum LiveKnobControlType: Int, Codable, CaseIterable, CustomStringConvert
     }
     /// Knob gesture recognizer.
     public private(set) var gestureRecognizer: LiveKnobGestureRecognizer!
+    private var doubleTapGestureRecognizer: UITapGestureRecognizer?
     
     // Track the initial movement direction for axis-locked controls
     private var initialMovementDirection: MovementDirection = .none
@@ -246,7 +247,7 @@ public enum LiveKnobControlType: Int, Codable, CaseIterable, CustomStringConvert
         
         CATransaction.commit()
     }
-
+    
     // Movement direction enum to track axis lock
     private enum MovementDirection {
         case none
@@ -373,7 +374,74 @@ public enum LiveKnobControlType: Int, Codable, CaseIterable, CustomStringConvert
         let valueRange = CGFloat(maximumValue - minimumValue)
         return CGFloat(self.value - minimumValue) / valueRange * angleRange + startAngle
     }
+    
+    // MARK: Double Tap
+    
+    /// Configures a double tap gesture recognizer for the knob
+    /// - Parameter action: The action to perform when double-tapped
+    public func addDoubleTapGesture(target: Any?, action: Selector?) {
+        // Remove existing double tap gesture if any
+        if let existingGesture = doubleTapGestureRecognizer {
+            removeGestureRecognizer(existingGesture)
+        }
+        
+        // Create a new double tap gesture
+        let tapGesture = UITapGestureRecognizer(target: target, action: action)
+        tapGesture.numberOfTapsRequired = 2
+        tapGesture.numberOfTouchesRequired = 1
+        tapGesture.delegate = self // Class needs to conform to UIGestureRecognizerDelegate
+        
+        // Store reference and add the gesture
+        doubleTapGestureRecognizer = tapGesture
+        addGestureRecognizer(tapGesture)
+    }
+    
+    // This method is crucial - it allows two gesture recognizers to work simultaneously
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                 shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Allow double tap to work alongside the pan gesture
+        if let tapGesture = gestureRecognizer as? UITapGestureRecognizer,
+           tapGesture.numberOfTapsRequired == 2 {
+            return true
+        }
+        
+        // If it's our pan gesture and the other is our double tap
+        if gestureRecognizer == self.gestureRecognizer &&
+           otherGestureRecognizer == doubleTapGestureRecognizer {
+            return true
+        }
+        
+        return false
+    }
+    
+    // This method controls which gesture should be delayed while another is being analyzed
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                 shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // If this is our knob's pan gesture and the other is a double tap,
+        // require the double tap to fail before allowing the pan
+        if gestureRecognizer == self.gestureRecognizer &&
+           otherGestureRecognizer == doubleTapGestureRecognizer {
+            return true
+        }
+        return false
+    }
+    
+    // This method controls which gesture should wait for another to fail
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                 shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // If this is our double tap and the other is our knob's pan gesture,
+        // make sure the double tap gets priority
+        if gestureRecognizer == doubleTapGestureRecognizer &&
+           otherGestureRecognizer == self.gestureRecognizer {
+            return true
+        }
+        return false
+    }
+
+
 }
+
+// MARK: - LiveKnobGestureRecognizer
 
 /// Custom gesture recognizer for the knob.
 public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
@@ -494,6 +562,8 @@ public class LiveKnobGestureRecognizer: UIPanGestureRecognizer {
         minimumNumberOfTouches = 1
     }
 }
+
+// MARK: - Markers
 
 extension LiveKnob {
     
